@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.2")]
+    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.3")]
     [Description("Helicopter buttons over the clothing slots: spawn, fetch and remove through SpawnHeli, its cooldowns drawn as draining bars")]
     public class RustfieldHeliSpawnUI : RustPlugin
     {
@@ -505,7 +505,7 @@ namespace Oxide.Plugins
                 Parent = block,
                 Components =
                 {
-                    new CuiRawImageComponent { Url = machine.Config.Icon, Color = IconTint },
+                    new CuiRawImageComponent { Url = machine.Config.Icon, Color = IconTint, BlocksRaycast = false },
                     At(IconLeft, iconBottom, IconLeft + IconWidth, iconBottom + IconHeight)
                 }
             });
@@ -648,7 +648,8 @@ namespace Oxide.Plugins
 
         private static CuiTextComponent TextOf(string text, int size, string color, TextAnchor align)
         {
-            return new CuiTextComponent { Text = text ?? string.Empty, FontSize = size, Font = Bold, Color = color, Align = align };
+            // Clicks go through words: a label stretched over a button would otherwise take them all.
+            return new CuiTextComponent { Text = text ?? string.Empty, FontSize = size, Font = Bold, Color = color, Align = align, BlocksRaycast = false };
         }
 
         private static CuiRectTransformComponent At(float x0, float y0, float x1, float y1)
@@ -758,7 +759,7 @@ namespace Oxide.Plugins
             if (string.IsNullOrEmpty(chat)) return;
 
             screen.LastClick = Time.realtimeSinceStartup;
-            player.SendConsoleCommand("chat.say", "/" + chat);
+            player.SendConsoleCommand("chat.say /" + chat);
 
             foreach (float delay in Rechecks) timer.Once(delay, () => Refresh(player));
         }

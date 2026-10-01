@@ -4,6 +4,17 @@ All notable changes to RustfieldHeliSpawnUI. Versions follow `major.minor.patch`
 
 ---
 
+## 1.0.3
+
+**Fixed**
+
+- The buttons took no clicks: the words over them caught every click. Labels and icons now let
+  clicks through.
+- The chat command goes to the client as one line, `chat.say /mymini`, the way RustfieldButtons
+  sends it.
+
+---
+
 ## 1.0.2
 
 **Changed**
