@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.1")]
+    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.2")]
     [Description("Helicopter buttons over the clothing slots: spawn, fetch and remove through SpawnHeli, its cooldowns drawn as draining bars")]
     public class RustfieldHeliSpawnUI : RustPlugin
     {
@@ -51,15 +51,15 @@ namespace Oxide.Plugins
 
         // The blocks, in canvas units from the bottom middle of the screen, where the clothing slots
         // hang. On a 1280x720 screen from the top left: block i at x = 107.5 + 108 i, 104 wide, two
-        // clothing columns; the header 499.25-523.25, the buttons 525.25-549.25, 50 each and 4 apart, each
+        // clothing columns; the header 499.5-523.5, the buttons 525.5-549.5, 50 each and 4 apart, each
         // under one clothing column.
         private const float BlocksLeft = -532.5f;
         private const float BlockPitch = 108f;
         private const float BlockWidth = 104f;
-        private const float ButtonsBottom = 170.75f;
-        private const float ButtonsTop = 194.75f;
-        private const float HeaderBottom = 196.75f;
-        private const float HeaderTop = 220.75f;
+        private const float ButtonsBottom = 170.5f;
+        private const float ButtonsTop = 194.5f;
+        private const float HeaderBottom = 196.5f;
+        private const float HeaderTop = 220.5f;
         private const float ButtonWidth = 50f;
         private const float RightLeft = 54f;
 

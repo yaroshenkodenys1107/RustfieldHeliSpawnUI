@@ -4,6 +4,15 @@ All notable changes to RustfieldHeliSpawnUI. Versions follow `major.minor.patch`
 
 ---
 
+## 1.0.2
+
+**Changed**
+
+- The strip 0.5 canvas units lower than 1.0.0 in all (1.0.1 moved it only 0.25, half a pixel on 2K,
+  which the screen rounds away).
+
+---
+
 ## 1.0.1
 
 **Changed**

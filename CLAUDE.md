@@ -9,7 +9,7 @@ Talk to the owner in Russian, briefly. Decide yourself, ask only when a choice i
 - Dashes, not dots, as separators in UI texts. Never "…" – the text must fit.
 - One language on screen. Every text comes from the lang files (en, ru, uk) or the config.
 - Units: CUI canvas 1280×720, 1 unit = 2 px on the owner's 1440p screen. The owner gives tweaks in f
-  (1 f = 1 px on 2K), step 0.5.
+  (1 f = 1 canvas unit = 2 px on 2K, as written in offsets), step 0.5.
 - Icons are flat white, tinted `1 1 1 0.22` in CUI. Exception here, by the owner: the helicopter
   icons are the game's colour pictures, untinted, web PNGs from `images/` (128 square, transparent).
 - Square corners, no outlines. Font `robotocondensed-bold`, 9–10.5 px (CUI takes whole sizes: 10).
@@ -22,11 +22,11 @@ Three blocks over the clothing slots, right of the backpack slot: Minicopter, At
 Scrap Transport. On screen from the top left (1280×720):
 
 - block i: x = 107.5 + 108·i, width 104 (two clothing columns);
-- header y 499.25–523.25: icon 22×22 at 4, name from 30, status dot 5×5 at 4 from the right;
-- buttons y 525.25–549.25: left 50, gap 4, right 50 – exactly under the clothing columns.
+- header y 499.5–523.5: icon 22×22 at 4, name from 30, status dot 5×5 at 4 from the right;
+- buttons y 525.5–549.5: left 50, gap 4, right 50 – exactly under the clothing columns.
 
 In code, anchor "0.5 0": `BlocksLeft -532.5`, `BlockPitch 108`, `BlockWidth 104`,
-`ButtonsBottom 170.75`, `ButtonsTop 194.75`, `HeaderBottom 196.75`, `HeaderTop 220.75`, `ButtonWidth 50`,
+`ButtonsBottom 170.5`, `ButtonsTop 194.5`, `HeaderBottom 196.5`, `HeaderTop 220.5`, `ButtonWidth 50`,
 `RightLeft 54`. Parent layer `Inventory` – shown only with the inventory open.
 
 Colours:
