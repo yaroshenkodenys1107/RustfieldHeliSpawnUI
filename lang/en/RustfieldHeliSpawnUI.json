@@ -1,0 +1,8 @@
+{
+  "Name.mini": "Minicopter",
+  "Name.attack": "Helicopter",
+  "Name.scrap": "Transport",
+  "Button.Spawn": "Spawn",
+  "Button.Fetch": "Fetch",
+  "Button.Remove": "Remove"
+}
