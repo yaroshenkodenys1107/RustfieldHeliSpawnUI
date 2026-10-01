@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.6")]
+    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.1.0")]
     [Description("Helicopter buttons over the clothing slots: spawn, fetch and remove through SpawnHeli, its cooldowns drawn as draining bars")]
     public class RustfieldHeliSpawnUI : RustPlugin
     {
@@ -87,8 +87,18 @@ namespace Oxide.Plugins
         private const string Red = "0.643 0.263 0.227 1";
         private const string Lime = "0.667 0.933 0.196 1";
         private const string Orange = "0.804 0.529 0.357 1";
-        private const string Ink = "1 1 1 1";
-        private const string InkOff = "1 1 1 0.42";
+        // The words, by the config's style. A - pure white, the inactive at 42% of it, as 1.0.x drew
+        // them. B - the warm white #E8DCD3 that RustfieldButtons' labels use, the inactive at 42% of
+        // that.
+        private const string StyleA = "A";
+        private const string StyleB = "B";
+        private const string InkA = "1 1 1 1";
+        private const string InkOffA = "1 1 1 0.42";
+        private const string InkB = "0.91 0.863 0.827 1";
+        private const string InkOffB = "0.91 0.863 0.827 0.42";
+
+        private string Ink => config.Style == StyleA ? InkA : InkB;
+        private string InkOff => config.Style == StyleA ? InkOffA : InkOffB;
         // The icons are the game's own pictures of the machines, in colour, so they are not tinted.
         private const string IconTint = "1 1 1 1";
         private const string Clear = "0 0 0 0";
@@ -132,6 +142,9 @@ namespace Oxide.Plugins
             [JsonProperty("Scrap Transport Helicopter")]
             public MachineConfig Scrap = new MachineConfig { Spawn = "myheli", Fetch = "fheli", Remove = "noheli", Icon = IconRoot + "scraptransport.png" };
 
+            [JsonProperty("Style (A or B)")]
+            public string Style = StyleB;
+
             [JsonProperty("Seconds between updates")]
             public float Tick = 1f;
 
@@ -166,6 +179,7 @@ namespace Oxide.Plugins
             if (config.Mini == null) config.Mini = new PluginConfig().Mini;
             if (config.Attack == null) config.Attack = new PluginConfig().Attack;
             if (config.Scrap == null) config.Scrap = new PluginConfig().Scrap;
+            config.Style = string.Equals(config.Style, StyleA, StringComparison.OrdinalIgnoreCase) ? StyleA : StyleB;
             if (config.Tick < 0.2f) config.Tick = 0.2f;
             if (config.DrainTick < 0.02f) config.DrainTick = 0.02f;
             if (config.DrainStep < 0f) config.DrainStep = 0f;

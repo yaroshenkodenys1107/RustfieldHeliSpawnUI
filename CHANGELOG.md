@@ -4,6 +4,15 @@ All notable changes to RustfieldHeliSpawnUI. Versions follow `major.minor.patch`
 
 ---
 
+## 1.1.0
+
+**Added**
+
+- `Style (A or B)` in the config. A – the 1.0.x words: white `1 1 1 1`, inactive `1 1 1 0.42`.
+  B (default) – the warm white #E8DCD3 of RustfieldButtons: `0.91 0.863 0.827 1`, inactive at 0.42.
+
+---
+
 ## 1.0.6
 
 **Changed**

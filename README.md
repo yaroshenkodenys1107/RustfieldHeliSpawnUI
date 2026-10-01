@@ -12,7 +12,7 @@ name and a status dot over two buttons:
   one removes it.
 - **The dot** – lime: in the world; orange: fetch cooling down; red: spawn cooling down; green: ready.
 
-Author: **Denys Yaroshenko** · Rust (Carbon / Oxide) · **v1.0.0**
+Author: **Denys Yaroshenko** · Rust (Carbon / Oxide) · **v1.1.0**
 
 ## Requirements
 
@@ -28,7 +28,7 @@ Author: **Denys Yaroshenko** · Rust (Carbon / Oxide) · **v1.0.0**
 
 ## Config
 
-Per machine: `Show`, the SpawnHeli `Spawn` / `Fetch` / `Remove` commands, and the icon URL (a square PNG). `Seconds between updates` – how often the cooldowns tick (1 by default).
+Per machine: `Show`, the SpawnHeli `Spawn` / `Fetch` / `Remove` commands, and the icon URL (a square PNG). `Style (A or B)` – A: white words; B (default): warm white #E8DCD3, as RustfieldButtons. `Seconds between updates` – how often the cooldowns tick (1 by default).
 
 The icons are in `images/`; the URLs point at this repository, so the images must be reachable for
 the server's clients – host them elsewhere if the repository is private.

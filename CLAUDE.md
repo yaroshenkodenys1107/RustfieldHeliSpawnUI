@@ -39,7 +39,8 @@ Colours:
 | Dot "in the world" | #aaee32 | `0.667 0.933 0.196 1` |
 | Dot "fetch cooling down" | #cd875b | `0.804 0.529 0.357 1` |
 | Spare blue | #1f5e8c | `0.122 0.369 0.549 1` |
-| Inactive text | 42% white | `1 1 1 0.42` |
+| Text, style A | white | `1 1 1 1`, inactive `1 1 1 0.42` |
+| Text, style B (default) | #E8DCD3 | `0.91 0.863 0.827 1`, inactive `0.91 0.863 0.827 0.42` |
 
 Behaviour: not in the world – left spawns, or shows the spawn cooldown as a red bar draining right
 to left with the time; in the world – left fetches (fetch cooldown drawn the same way), right
