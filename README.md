@@ -28,8 +28,7 @@ Author: **Denys Yaroshenko** · Rust (Carbon / Oxide) · **v1.0.0**
 
 ## Config
 
-Per machine: `Show`, the SpawnHeli `Spawn` / `Fetch` / `Remove` commands, and the icon URL (white PNG,
-tinted in game). `Seconds between updates` – how often the cooldowns tick (1 by default).
+Per machine: `Show`, the SpawnHeli `Spawn` / `Fetch` / `Remove` commands, and the icon URL (a square PNG). `Seconds between updates` – how often the cooldowns tick (1 by default).
 
 The icons are in `images/`; the URLs point at this repository, so the images must be reachable for
 the server's clients – host them elsewhere if the repository is private.

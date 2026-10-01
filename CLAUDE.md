@@ -10,7 +10,8 @@ Talk to the owner in Russian, briefly. Decide yourself, ask only when a choice i
 - One language on screen. Every text comes from the lang files (en, ru, uk) or the config.
 - Units: CUI canvas 1280×720, 1 unit = 2 px on the owner's 1440p screen. The owner gives tweaks in f
   (1 f = 1 px on 2K), step 0.5.
-- Icons are flat white, tinted `1 1 1 0.22` in CUI. They are web PNGs from `images/`.
+- Icons are flat white, tinted `1 1 1 0.22` in CUI. Exception here, by the owner: the helicopter
+  icons are the game's colour pictures, untinted, web PNGs from `images/` (128 square, transparent).
 - Square corners, no outlines. Font `robotocondensed-bold`, 9–10.5 px (CUI takes whole sizes: 10).
 - Draw the way RustfieldSorter's `Sketch` does: named plates, a clear button over them washed on
   hover, labels with 40 spare units away from their alignment.
@@ -21,7 +22,7 @@ Three blocks over the clothing slots, right of the backpack slot: Minicopter, At
 Scrap Transport. On screen from the top left (1280×720):
 
 - block i: x = 107.5 + 108·i, width 104 (two clothing columns);
-- header y 499–523: icon 22×11 at 4, name from 30, status dot 5×5 at 4 from the right;
+- header y 499–523: icon 22×22 at 4, name from 30, status dot 5×5 at 4 from the right;
 - buttons y 525–549: left 50, gap 4, right 50 – exactly under the clothing columns.
 
 In code, anchor "0.5 0": `BlocksLeft -532.5`, `BlockPitch 108`, `BlockWidth 104`,

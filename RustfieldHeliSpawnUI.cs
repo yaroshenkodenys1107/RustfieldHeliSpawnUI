@@ -63,11 +63,11 @@ namespace Oxide.Plugins
         private const float ButtonWidth = 50f;
         private const float RightLeft = 54f;
 
-        // Inside the header, from the block's left and bottom: the icon 22 by 11 in the middle of the
+        // Inside the header, from the block's left and bottom: the icon 22 square in the middle of the
         // height, the name from 30, the dot 5 square, 4 in from the right.
         private const float IconLeft = 4f;
         private const float IconWidth = 22f;
-        private const float IconHeight = 11f;
+        private const float IconHeight = 22f;
         private const float NameLeft = 30f;
         private const float DotSize = 5f;
         private const float DotRight = 4f;
@@ -85,7 +85,8 @@ namespace Oxide.Plugins
         private const string Orange = "0.804 0.529 0.357 1";
         private const string Ink = "1 1 1 1";
         private const string InkOff = "1 1 1 0.42";
-        private const string IconTint = "1 1 1 0.22";
+        // The icons are the game's own pictures of the machines, in colour, so they are not tinted.
+        private const string IconTint = "1 1 1 1";
         private const string Clear = "0 0 0 0";
 
         // A button is clear at rest and lays this wash over its plate on hover.
@@ -113,7 +114,7 @@ namespace Oxide.Plugins
             [JsonProperty("Spawn command")] public string Spawn;
             [JsonProperty("Fetch command")] public string Fetch;
             [JsonProperty("Remove command")] public string Remove;
-            [JsonProperty("Icon (web PNG, white)")] public string Icon;
+            [JsonProperty("Icon (web PNG)")] public string Icon;
         }
 
         private sealed class PluginConfig
