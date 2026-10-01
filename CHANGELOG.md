@@ -4,6 +4,19 @@ All notable changes to RustfieldHeliSpawnUI. Versions follow `major.minor.patch`
 
 ---
 
+## 1.0.4
+
+**Changed**
+
+- The red bars drain smoothly, as RustfieldGrade's do: their own timer every 0.05 s, a send only when
+  the edge has moved 0.1 canvas units. The full look is still checked once a second.
+
+**Config**
+
+- New: `Seconds between bar updates` (0.05), `Bar step (canvas units)` (0.1).
+
+---
+
 ## 1.0.3
 
 **Fixed**

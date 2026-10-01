@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.3")]
+    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.4")]
     [Description("Helicopter buttons over the clothing slots: spawn, fetch and remove through SpawnHeli, its cooldowns drawn as draining bars")]
     public class RustfieldHeliSpawnUI : RustPlugin
     {
@@ -133,6 +133,14 @@ namespace Oxide.Plugins
 
             [JsonProperty("Seconds between updates")]
             public float Tick = 1f;
+
+            // The red bars drain on a timer of their own, as RustfieldGrade's do: often, and only
+            // once the bar's edge has moved this far.
+            [JsonProperty("Seconds between bar updates")]
+            public float DrainTick = 0.05f;
+
+            [JsonProperty("Bar step (canvas units)")]
+            public float DrainStep = 0.1f;
         }
 
         protected override void LoadDefaultConfig() => config = new PluginConfig();
@@ -158,6 +166,8 @@ namespace Oxide.Plugins
             if (config.Attack == null) config.Attack = new PluginConfig().Attack;
             if (config.Scrap == null) config.Scrap = new PluginConfig().Scrap;
             if (config.Tick < 0.2f) config.Tick = 0.2f;
+            if (config.DrainTick < 0.02f) config.DrainTick = 0.02f;
+            if (config.DrainStep < 0f) config.DrainStep = 0f;
 
             // Written back every load, so a key the file predates reaches it.
             SaveConfig();
@@ -389,6 +399,10 @@ namespace Oxide.Plugins
             // The right button removes, and only while the machine is in the world.
             public bool CanRemove;
 
+            // When the cooldown ends, on the realtime clock, and how long it is; not part of the look.
+            public float Ends;
+            public float Total;
+
             public bool Equals(Look other)
             {
                 return State == other.State && Action == other.Action && Word == other.Word && Mathf.Approximately(Fill, other.Fill) &&
@@ -409,7 +423,9 @@ namespace Oxide.Plugins
 
             if (left > 0 && total > 0)
             {
-                look.Fill = Mathf.Clamp01((float)(left / total));
+                look.Total = (float)total;
+                look.Ends = Time.realtimeSinceStartup + (float)left;
+                look.Fill = Drained(left / total);
                 look.Time = Clock(left);
             }
             else
@@ -419,6 +435,16 @@ namespace Oxide.Plugins
             }
 
             return look;
+        }
+
+        // The share of the button still red, moved in whole bar steps so a send is never wasted on
+        // an edge that has not visibly moved; exactly full and exactly empty stay so.
+        private float Drained(double fraction)
+        {
+            float f = Mathf.Clamp01((float)fraction);
+            if (config.DrainStep <= 0f || f <= 0f || f >= 1f) return f;
+            float step = config.DrainStep / ButtonWidth;
+            return Mathf.Clamp01(Mathf.Ceil(f / step) * step);
         }
 
         // 47:12, or 1:00:00 from an hour up; a started second counts as a whole one.
@@ -554,7 +580,11 @@ namespace Oxide.Plugins
             {
                 Look look = LookOf(player, machine, code);
                 Look shown;
-                if (screen.Looks.TryGetValue(machine.Key, out shown) && shown.Equals(look)) continue;
+                if (screen.Looks.TryGetValue(machine.Key, out shown) && shown.Equals(look))
+                {
+                    screen.Looks[machine.Key] = look;
+                    continue;
+                }
 
                 screen.Looks[machine.Key] = look;
                 if (elements == null) elements = new CuiElementContainer();
@@ -675,6 +705,7 @@ namespace Oxide.Plugins
         #region Lifecycle
 
         private Timer ticker;
+        private Timer drainer;
 
         private void OnServerInitialized()
         {
@@ -684,13 +715,60 @@ namespace Oxide.Plugins
             foreach (BasePlayer player in BasePlayer.activePlayerList) Draw(player);
 
             ticker = timer.Every(config.Tick, Tick);
+            drainer = timer.Every(config.DrainTick, Drain);
         }
 
         private void Unload()
         {
             ticker?.Destroy();
+            drainer?.Destroy();
             foreach (BasePlayer player in BasePlayer.activePlayerList) CuiHelper.DestroyUi(player, RootName);
             screens.Clear();
+        }
+
+        // Between the full looks, only the bars and their times, worked out from when each cooldown
+        // ends - no SpawnHeli calls. A cooldown that has run out gets the full look at once.
+        private void Drain()
+        {
+            float now = Time.realtimeSinceStartup;
+
+            foreach (BasePlayer player in BasePlayer.activePlayerList)
+            {
+                Screen screen;
+                if (!screens.TryGetValue(player.UserIDString, out screen)) continue;
+
+                CuiElementContainer elements = null;
+                bool ended = false;
+
+                foreach (Machine machine in machines)
+                {
+                    Look look;
+                    if (!screen.Looks.TryGetValue(machine.Key, out look) || look.Action != null || look.Total <= 0f) continue;
+
+                    float left = look.Ends - now;
+                    if (left <= 0f)
+                    {
+                        ended = true;
+                        continue;
+                    }
+
+                    float fill = Drained(left / look.Total);
+                    string time = Clock(left);
+                    if (Mathf.Approximately(fill, look.Fill) && time == look.Time) continue;
+
+                    if (elements == null) elements = new CuiElementContainer();
+                    string name = BlockName(machine) + ".Left";
+                    if (!Mathf.Approximately(fill, look.Fill)) Update(elements, name + ".Fill", FillRect(fill));
+                    if (time != look.Time) Update(elements, name + ".Text", TextOf(time, ButtonSize, Ink, TextAnchor.MiddleCenter));
+
+                    look.Fill = fill;
+                    look.Time = time;
+                    screen.Looks[machine.Key] = look;
+                }
+
+                if (elements != null) CuiHelper.AddUi(player, elements);
+                if (ended) Refresh(player);
+            }
         }
 
         private void Tick()
