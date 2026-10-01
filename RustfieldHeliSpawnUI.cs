@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.5")]
+    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.6")]
     [Description("Helicopter buttons over the clothing slots: spawn, fetch and remove through SpawnHeli, its cooldowns drawn as draining bars")]
     public class RustfieldHeliSpawnUI : RustPlugin
     {
@@ -553,25 +553,40 @@ namespace Oxide.Plugins
             float dotBottom = headBottom + (height - headBottom - DotSize) / 2f;
             Image(elements, block, block + ".Dot", BlockWidth - DotRight - DotSize, dotBottom, BlockWidth - DotRight, dotBottom + DotSize, DotColor(look.State));
 
-            // The left button: a plate, the red bar on it, the button and its word.
+            // The left button: the face and the red bar lie on its plate, under the button; its word
+            // is the button's child.
             string left = block + ".Left";
-            Image(elements, block, left, 0f, 0f, ButtonWidth, buttonsHeight, Plate);
-            elements.Add(new CuiElement { Name = left + ".Face", Parent = left, Components = { new CuiImageComponent { Color = LeftFace(look) }, Stretch() } });
-            elements.Add(new CuiElement { Name = left + ".Fill", Parent = left, Components = { new CuiImageComponent { Color = Red }, FillRect(look.Fill) } });
-            elements.Add(new CuiElement { Name = left + ".Button", Parent = left, Components = { ButtonOf(LeftCommand(machine, look)), Stretch() } });
-            elements.Add(new CuiElement { Name = left + ".Text", Parent = left, Components = { TextOf(LeftText(look), ButtonSize, Ink, TextAnchor.MiddleCenter), Stretch() } });
+            string leftButton = Button(elements, block, left, 0f, 0f, ButtonWidth, buttonsHeight, LeftCommand(machine, look), plate =>
+            {
+                elements.Add(new CuiElement { Name = plate + ".Face", Parent = plate, Components = { new CuiImageComponent { Color = LeftFace(look) }, Stretch() } });
+                elements.Add(new CuiElement { Name = plate + ".Fill", Parent = plate, Components = { new CuiImageComponent { Color = Red }, FillRect(look.Fill) } });
+            });
+            elements.Add(new CuiElement { Name = leftButton + ".Text", Parent = leftButton, Components = { TextOf(LeftText(look), ButtonSize, Ink, TextAnchor.MiddleCenter), Stretch() } });
 
             // The right button removes.
             string right = block + ".Right";
-            Image(elements, block, right, RightLeft, 0f, RightLeft + ButtonWidth, buttonsHeight, Plate);
-            elements.Add(new CuiElement { Name = right + ".Face", Parent = right, Components = { new CuiImageComponent { Color = RightFace(look) }, Stretch() } });
-            elements.Add(new CuiElement { Name = right + ".Button", Parent = right, Components = { ButtonOf(RightCommand(machine, look)), Stretch() } });
+            string rightButton = Button(elements, block, right, RightLeft, 0f, RightLeft + ButtonWidth, buttonsHeight, RightCommand(machine, look), plate =>
+                elements.Add(new CuiElement { Name = plate + ".Face", Parent = plate, Components = { new CuiImageComponent { Color = RightFace(look) }, Stretch() } }));
             elements.Add(new CuiElement
             {
-                Name = right + ".Text",
-                Parent = right,
+                Name = rightButton + ".Text",
+                Parent = rightButton,
                 Components = { TextOf(T(code, "Button.Remove"), ButtonSize, look.CanRemove ? Ink : InkOff, TextAnchor.MiddleCenter), Stretch() }
             });
+        }
+
+        // Every button, as RustfieldSorter's Sketch.Button draws one: a plate of its own colour, what
+        // lies on the plate (faces, bars), then a clear button over all of it, washed on hover and lit
+        // when pressed. Words and icons go on the button, which is returned, as its children.
+        private static string Button(CuiElementContainer elements, string parent, string name, float x0, float y0, float x1, float y1, string command,
+                                     Action<string> under = null)
+        {
+            Image(elements, parent, name, x0, y0, x1, y1, Plate);
+            under?.Invoke(name);
+
+            string button = name + ".Button";
+            elements.Add(new CuiElement { Name = button, Parent = name, Components = { ButtonOf(command), Stretch() } });
+            return button;
         }
 
         // Only what differs from what is on screen, with Update set.
@@ -611,13 +626,13 @@ namespace Oxide.Plugins
                     Update(elements, left + ".Face", new CuiImageComponent { Color = LeftFace(look) });
                     Update(elements, left + ".Button", ButtonOf(LeftCommand(machine, look)));
                 }
-                if (shown.Time != look.Time || shown.Word != look.Word) Update(elements, left + ".Text", TextOf(LeftText(look), ButtonSize, Ink, TextAnchor.MiddleCenter));
+                if (shown.Time != look.Time || shown.Word != look.Word) Update(elements, left + ".Button.Text", TextOf(LeftText(look), ButtonSize, Ink, TextAnchor.MiddleCenter));
 
                 if (shown.CanRemove != look.CanRemove)
                 {
                     Update(elements, right + ".Face", new CuiImageComponent { Color = RightFace(look) });
                     Update(elements, right + ".Button", ButtonOf(RightCommand(machine, look)));
-                    Update(elements, right + ".Text", TextOf(T(code, "Button.Remove"), ButtonSize, look.CanRemove ? Ink : InkOff, TextAnchor.MiddleCenter));
+                    Update(elements, right + ".Button.Text", TextOf(T(code, "Button.Remove"), ButtonSize, look.CanRemove ? Ink : InkOff, TextAnchor.MiddleCenter));
                 }
             }
 
@@ -635,17 +650,16 @@ namespace Oxide.Plugins
 
         private string RightCommand(Machine machine, Look look) => look.CanRemove ? Command + " remove " + machine.Key : null;
 
-        // Clear at rest, washed lighter on hover; a button that runs nothing does neither.
+        // Clear at rest, washed lighter on hover, lit when pressed.
         private static CuiButtonComponent ButtonOf(string command)
         {
-            bool live = command != null;
             return new CuiButtonComponent
             {
                 Command = command ?? string.Empty,
-                Color = live ? Wash : Clear,
+                Color = Wash,
                 NormalColor = Clear,
-                HighlightedColor = live ? Lit : Clear,
-                PressedColor = live ? Lit : Clear,
+                HighlightedColor = Lit,
+                PressedColor = Lit,
                 SelectedColor = Clear,
                 DisabledColor = Clear,
                 FadeDuration = 0.08f
@@ -772,7 +786,7 @@ namespace Oxide.Plugins
                     if (elements == null) elements = new CuiElementContainer();
                     string name = BlockName(machine) + ".Left";
                     if (!Mathf.Approximately(fill, look.Fill)) Update(elements, name + ".Fill", FillRect(fill));
-                    if (time != look.Time) Update(elements, name + ".Text", TextOf(time, ButtonSize, Ink, TextAnchor.MiddleCenter));
+                    if (time != look.Time) Update(elements, name + ".Button.Text", TextOf(time, ButtonSize, Ink, TextAnchor.MiddleCenter));
 
                     look.Fill = fill;
                     look.Time = time;

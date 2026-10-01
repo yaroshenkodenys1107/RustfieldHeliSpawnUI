@@ -4,6 +4,15 @@ All notable changes to RustfieldHeliSpawnUI. Versions follow `major.minor.patch`
 
 ---
 
+## 1.0.6
+
+**Changed**
+
+- Every button is drawn by one helper, as RustfieldSorter's `Sketch.Button`: a plate, then a button
+  over it washed `1 1 1 0.1`, lit `1 1 1 1` on hover and press, fade 0.08; the words are its children.
+
+---
+
 ## 1.0.5
 
 **Changed**
