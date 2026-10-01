@@ -35,9 +35,9 @@ Colours:
 |---|---|---|
 | Plate (RustfieldButtons bar) | rgba(247,235,225,0.035) + blur | `0.969 0.922 0.882 0.035`, `assets/content/ui/uibackgroundblur.mat` |
 | Spawn / fetch, dot "ready" | #708943 | `0.439 0.537 0.263 1` |
-| Remove, cooldown bar | #a4433a | `0.643 0.263 0.227 1` |
+| Remove, cooldown bar, dot "spawn cooling down" | #a4433a | `0.643 0.263 0.227 1` |
 | Dot "in the world" | #aaee32 | `0.667 0.933 0.196 1` |
-| Dot "cooling down" | #cd875b | `0.804 0.529 0.357 1` |
+| Dot "fetch cooling down" | #cd875b | `0.804 0.529 0.357 1` |
 | Spare blue | #1f5e8c | `0.122 0.369 0.549 1` |
 | Inactive text | 42% white | `1 1 1 0.42` |
 

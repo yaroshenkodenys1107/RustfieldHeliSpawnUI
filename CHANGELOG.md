@@ -4,6 +4,15 @@ All notable changes to RustfieldHeliSpawnUI. Versions follow `major.minor.patch`
 
 ---
 
+## 1.0.5
+
+**Changed**
+
+- The status dot: red while the spawn cools down, orange while the fetch cools down, lime in the
+  world, green ready.
+
+---
+
 ## 1.0.4
 
 **Changed**

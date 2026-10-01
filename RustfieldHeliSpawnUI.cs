@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.4")]
+    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.5")]
     [Description("Helicopter buttons over the clothing slots: spawn, fetch and remove through SpawnHeli, its cooldowns drawn as draining bars")]
     public class RustfieldHeliSpawnUI : RustPlugin
     {
@@ -25,7 +25,8 @@ namespace Oxide.Plugins
         //    drains right to left, with the time left on it. The right button is off.
         //  * In the world: the left button fetches it to the player, with the fetch cooldown drawn
         //    the same way; the right button removes it.
-        //  * The dot: lime - in the world, orange - cooling down, green - ready.
+        //  * The dot: lime - in the world, orange - fetch cooling down, red - spawn cooling down,
+        //    green - ready.
         //
         // SpawnHeli does all the work and is never edited. The buttons run its chat commands as the
         // player, so its permissions, checks and messages stay what they are. Whether a machine is
@@ -383,6 +384,7 @@ namespace Oxide.Plugins
         private const int StateReady = 0;
         private const int StateCooling = 1;
         private const int StateWorld = 2;
+        private const int StateFetching = 3;
 
         // What one block shows; two equal looks draw the same pixels.
         private struct Look : IEquatable<Look>
@@ -418,7 +420,7 @@ namespace Oxide.Plugins
             double total;
             double left = CooldownLeft(player, machine, inWorld, out total);
 
-            look.State = inWorld ? StateWorld : left > 0 ? StateCooling : StateReady;
+            look.State = inWorld ? (left > 0 ? StateFetching : StateWorld) : left > 0 ? StateCooling : StateReady;
             look.CanRemove = inWorld;
 
             if (left > 0 && total > 0)
@@ -457,7 +459,18 @@ namespace Oxide.Plugins
                 : string.Format(CultureInfo.InvariantCulture, "{0}:{1:00}", whole / 60, rest);
         }
 
-        private static string DotColor(int state) => state == StateWorld ? Lime : state == StateCooling ? Orange : Green;
+        // Lime - in the world; orange - in the world, fetch cooling down; red - spawn cooling down;
+        // green - ready.
+        private static string DotColor(int state)
+        {
+            switch (state)
+            {
+                case StateWorld: return Lime;
+                case StateFetching: return Orange;
+                case StateCooling: return Red;
+                default: return Green;
+            }
+        }
 
         #endregion
 
