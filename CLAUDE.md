@@ -22,18 +22,18 @@ Three blocks over the clothing slots, right of the backpack slot: Minicopter, At
 Scrap Transport. On screen from the top left (1280×720):
 
 - block i: x = 107.5 + 108·i, width 104 (two clothing columns);
-- header y 499–523: icon 22×22 at 4, name from 30, status dot 5×5 at 4 from the right;
-- buttons y 525–549: left 50, gap 4, right 50 – exactly under the clothing columns.
+- header y 499.25–523.25: icon 22×22 at 4, name from 30, status dot 5×5 at 4 from the right;
+- buttons y 525.25–549.25: left 50, gap 4, right 50 – exactly under the clothing columns.
 
 In code, anchor "0.5 0": `BlocksLeft -532.5`, `BlockPitch 108`, `BlockWidth 104`,
-`ButtonsBottom 171`, `ButtonsTop 195`, `HeaderBottom 197`, `HeaderTop 221`, `ButtonWidth 50`,
+`ButtonsBottom 170.75`, `ButtonsTop 194.75`, `HeaderBottom 196.75`, `HeaderTop 220.75`, `ButtonWidth 50`,
 `RightLeft 54`. Parent layer `Inventory` – shown only with the inventory open.
 
 Colours:
 
 | What | Hex | CUI |
 |---|---|---|
-| Plate | rgba(69,64,57,0.92) | `0.271 0.251 0.224 0.92` |
+| Plate (RustfieldButtons bar) | rgba(247,235,225,0.035) + blur | `0.969 0.922 0.882 0.035`, `assets/content/ui/uibackgroundblur.mat` |
 | Spawn / fetch, dot "ready" | #708943 | `0.439 0.537 0.263 1` |
 | Remove, cooldown bar | #a4433a | `0.643 0.263 0.227 1` |
 | Dot "in the world" | #aaee32 | `0.667 0.933 0.196 1` |

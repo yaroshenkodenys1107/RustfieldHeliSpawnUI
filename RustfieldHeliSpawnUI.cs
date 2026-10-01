@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.0")]
+    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.0.1")]
     [Description("Helicopter buttons over the clothing slots: spawn, fetch and remove through SpawnHeli, its cooldowns drawn as draining bars")]
     public class RustfieldHeliSpawnUI : RustPlugin
     {
@@ -51,15 +51,15 @@ namespace Oxide.Plugins
 
         // The blocks, in canvas units from the bottom middle of the screen, where the clothing slots
         // hang. On a 1280x720 screen from the top left: block i at x = 107.5 + 108 i, 104 wide, two
-        // clothing columns; the header 499-523, the buttons 525-549, 50 each and 4 apart, each
+        // clothing columns; the header 499.25-523.25, the buttons 525.25-549.25, 50 each and 4 apart, each
         // under one clothing column.
         private const float BlocksLeft = -532.5f;
         private const float BlockPitch = 108f;
         private const float BlockWidth = 104f;
-        private const float ButtonsBottom = 171f;
-        private const float ButtonsTop = 195f;
-        private const float HeaderBottom = 197f;
-        private const float HeaderTop = 221f;
+        private const float ButtonsBottom = 170.75f;
+        private const float ButtonsTop = 194.75f;
+        private const float HeaderBottom = 196.75f;
+        private const float HeaderTop = 220.75f;
         private const float ButtonWidth = 50f;
         private const float RightLeft = 54f;
 
@@ -78,7 +78,10 @@ namespace Oxide.Plugins
 
         // The plates, and the colours of what a button does: green spawns and fetches, red removes
         // and drains, lime, orange and green say where the machine is.
-        private const string Plate = "0.271 0.251 0.224 0.92";
+        // The plates are RustfieldButtons' bars: the game's warm tint at a very low alpha over the
+        // frosted blur, what an empty belt slot is made of. Green and red lie on them as faces.
+        private const string Plate = "0.969 0.922 0.882 0.035";
+        private const string Blur = "assets/content/ui/uibackgroundblur.mat";
         private const string Green = "0.439 0.537 0.263 1";
         private const string Red = "0.643 0.263 0.227 1";
         private const string Lime = "0.667 0.933 0.196 1";
@@ -513,14 +516,16 @@ namespace Oxide.Plugins
 
             // The left button: a plate, the red bar on it, the button and its word.
             string left = block + ".Left";
-            Image(elements, block, left, 0f, 0f, ButtonWidth, buttonsHeight, LeftPlate(look));
+            Image(elements, block, left, 0f, 0f, ButtonWidth, buttonsHeight, Plate);
+            elements.Add(new CuiElement { Name = left + ".Face", Parent = left, Components = { new CuiImageComponent { Color = LeftFace(look) }, Stretch() } });
             elements.Add(new CuiElement { Name = left + ".Fill", Parent = left, Components = { new CuiImageComponent { Color = Red }, FillRect(look.Fill) } });
             elements.Add(new CuiElement { Name = left + ".Button", Parent = left, Components = { ButtonOf(LeftCommand(machine, look)), Stretch() } });
             elements.Add(new CuiElement { Name = left + ".Text", Parent = left, Components = { TextOf(LeftText(look), ButtonSize, Ink, TextAnchor.MiddleCenter), Stretch() } });
 
             // The right button removes.
             string right = block + ".Right";
-            Image(elements, block, right, RightLeft, 0f, RightLeft + ButtonWidth, buttonsHeight, look.CanRemove ? Red : Plate);
+            Image(elements, block, right, RightLeft, 0f, RightLeft + ButtonWidth, buttonsHeight, Plate);
+            elements.Add(new CuiElement { Name = right + ".Face", Parent = right, Components = { new CuiImageComponent { Color = RightFace(look) }, Stretch() } });
             elements.Add(new CuiElement { Name = right + ".Button", Parent = right, Components = { ButtonOf(RightCommand(machine, look)), Stretch() } });
             elements.Add(new CuiElement
             {
@@ -560,14 +565,14 @@ namespace Oxide.Plugins
                 if (!Mathf.Approximately(shown.Fill, look.Fill)) Update(elements, left + ".Fill", FillRect(look.Fill));
                 if (shown.Action != look.Action)
                 {
-                    Update(elements, left, new CuiImageComponent { Color = LeftPlate(look) });
+                    Update(elements, left + ".Face", new CuiImageComponent { Color = LeftFace(look) });
                     Update(elements, left + ".Button", ButtonOf(LeftCommand(machine, look)));
                 }
                 if (shown.Time != look.Time || shown.Word != look.Word) Update(elements, left + ".Text", TextOf(LeftText(look), ButtonSize, Ink, TextAnchor.MiddleCenter));
 
                 if (shown.CanRemove != look.CanRemove)
                 {
-                    Update(elements, right, new CuiImageComponent { Color = look.CanRemove ? Red : Plate });
+                    Update(elements, right + ".Face", new CuiImageComponent { Color = RightFace(look) });
                     Update(elements, right + ".Button", ButtonOf(RightCommand(machine, look)));
                     Update(elements, right + ".Text", TextOf(T(code, "Button.Remove"), ButtonSize, look.CanRemove ? Ink : InkOff, TextAnchor.MiddleCenter));
                 }
@@ -576,8 +581,10 @@ namespace Oxide.Plugins
             if (elements != null) CuiHelper.AddUi(player, elements);
         }
 
-        // Green when it runs something, a plain plate under a cooldown's bar.
-        private static string LeftPlate(Look look) => look.Action == null ? Plate : Green;
+        // Green when it runs something; under a cooldown's bar only the plate shows.
+        private static string LeftFace(Look look) => look.Action == null ? Clear : Green;
+
+        private static string RightFace(Look look) => look.CanRemove ? Red : Clear;
 
         private string LeftCommand(Machine machine, Look look) => look.Action == null ? null : Command + " " + look.Action + " " + machine.Key;
 
@@ -627,7 +634,7 @@ namespace Oxide.Plugins
 
         private static void Image(CuiElementContainer elements, string parent, string name, float x0, float y0, float x1, float y1, string color)
         {
-            elements.Add(new CuiElement { Name = name, Parent = parent, Components = { new CuiImageComponent { Color = color }, At(x0, y0, x1, y1) } });
+            elements.Add(new CuiElement { Name = name, Parent = parent, Components = { new CuiImageComponent { Color = color, Material = color == Plate ? Blur : null }, At(x0, y0, x1, y1) } });
         }
 
         // One line of text; its rect is 40 wider on the side away from its alignment, so a text a

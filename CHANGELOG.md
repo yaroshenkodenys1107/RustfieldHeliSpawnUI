@@ -4,6 +4,16 @@ All notable changes to RustfieldHeliSpawnUI. Versions follow `major.minor.patch`
 
 ---
 
+## 1.0.1
+
+**Changed**
+
+- Plates take RustfieldButtons' bar look: `0.969 0.922 0.882 0.035` over the blur material. Green and
+  red now lie on them as faces.
+- The whole strip 0.5 f (0.25 canvas units) lower.
+
+---
+
 ## 1.0.0
 
 **Added**
