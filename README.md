@@ -12,7 +12,7 @@ name and a status dot over two buttons:
   one removes it.
 - **The dot** – lime: in the world; orange: fetch cooling down; red: spawn cooling down; green: ready.
 
-Author: **Denys Yaroshenko** · Rust (Carbon / Oxide) · **v1.1.0**
+Author: **Denys Yaroshenko** · Rust (Carbon / Oxide) · **v1.1.1**
 
 ## Requirements
 

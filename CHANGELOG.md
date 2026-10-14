@@ -4,6 +4,22 @@ All notable changes to RustfieldHeliSpawnUI. Versions follow `major.minor.patch`
 
 ---
 
+## 1.1.1
+
+**Changed**
+
+- The English names in the block headers are short: Mini, Attack, Scrappy (they were Minicopter,
+  Helicopter, Transport). Russian and Ukrainian are as before.
+- Servers that already ran 1.1.0 keep the old English words in `lang/en/RustfieldHeliSpawnUI.json`
+  (Carbon never rewrites a key that is on disk): change the three values, or delete the file, before
+  the reload.
+
+**Lang keys**
+
+- Texts changed in `en`: `Name.mini`, `Name.attack`, `Name.scrap`. No key added or renamed.
+
+---
+
 ## 1.1.0
 
 **Added**

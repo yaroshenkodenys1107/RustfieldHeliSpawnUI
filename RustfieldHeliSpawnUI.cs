@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.1.0")]
+    [Info("RustfieldHeliSpawnUI", "Denys Yaroshenko", "1.1.1")]
     [Description("Helicopter buttons over the clothing slots: spawn, fetch and remove through SpawnHeli, its cooldowns drawn as draining bars")]
     public class RustfieldHeliSpawnUI : RustPlugin
     {
@@ -194,9 +194,9 @@ namespace Oxide.Plugins
 
         private static readonly Dictionary<string, string> English = new Dictionary<string, string>
         {
-            ["Name.mini"] = "Minicopter",
-            ["Name.attack"] = "Helicopter",
-            ["Name.scrap"] = "Transport",
+            ["Name.mini"] = "Mini",
+            ["Name.attack"] = "Attack",
+            ["Name.scrap"] = "Scrappy",
             ["Button.Spawn"] = "Spawn",
             ["Button.Fetch"] = "Fetch",
             ["Button.Remove"] = "Remove"
